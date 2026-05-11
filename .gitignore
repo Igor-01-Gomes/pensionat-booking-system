@@ -42,5 +42,5 @@ Thumbs.db
 ### Maven ###
 dependency-reduced-pom.xml
 
-### Environment variables
+### Environment variables ###
 .env
