@@ -1,21 +1,8 @@
 package com.pensionat.booking.repository;
 
-import java.time.LocalDate;
+import com.pensionat.booking.model.BookingEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BookingRepository {
-
-    extends JpaRepository<BookingEntity, Integer> {
-
-        boolean existsByCustomerIdStatus(int customerId, BookingStatus status);
-
-        List<BookingEntity> findByCustomerId(int customerId);
-
-        List<BookingEntity>findByRoomIdAndDateStatus(
-        int roomId,
-        BookingStatus status,
-        LocalDate endDate,
-        LocalDate startDate
-        );
-    }
+public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
 
 }
