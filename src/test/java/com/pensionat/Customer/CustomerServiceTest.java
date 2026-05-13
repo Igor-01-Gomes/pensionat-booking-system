@@ -17,14 +17,12 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-
-    class CustomerServiceTest {
+class CustomerServiceTest {
 
     @Mock
     private CustomerRepository customerRepository;
     @InjectMocks
     private CustomerService customerService;
-
 
 
     @Test
@@ -55,8 +53,8 @@ import static org.mockito.Mockito.when;
         assertNotEquals("Patric", testResult.getFirstName());
 
         verify(customerRepository).save(any(CustomerEntity.class));
-
     }
+
     @Test
     void givenValidRequest_WhenCreateCustomer_ThenRepositoryCalledOnce() {
         CreateCustomerRequest request = new CreateCustomerRequest("Daniel",
@@ -68,6 +66,7 @@ import static org.mockito.Mockito.when;
         customerService.createCustomer(request);
         verify(customerRepository).save(any(CustomerEntity.class));
     }
+
     @Test
     void givenRepositoryFails_WhenCreateCustomer_ThenThrowException() {
         CreateCustomerRequest request = new CreateCustomerRequest("Daniel",
@@ -77,6 +76,6 @@ import static org.mockito.Mockito.when;
                 "+46701234567");
         when(customerRepository.save(any(CustomerEntity.class))).thenThrow(new RuntimeException("Database error!"));
 
-        assertThrows(RuntimeException.class,() -> customerService.createCustomer(request));
+        assertThrows(RuntimeException.class, () -> customerService.createCustomer(request));
     }
 }
