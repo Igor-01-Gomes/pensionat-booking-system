@@ -3,6 +3,7 @@ package com.pensionat.customer.service;
 
 import com.pensionat.booking.model.BookingEntity;
 import com.pensionat.booking.repository.BookingRepository;
+import com.pensionat.customer.model.CreateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
 import com.pensionat.customer.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,13 @@ public class CustomerService {
     public List<CustomerEntity> getAllCustomers() {
         return customerRepository.findAll();
     }
-    public CustomerEntity getCustomerById(CreateCustomerRequest request) {
-        CustomerEntity customer = new CustomerEntity(request.firstName(),request.lastName(),request.email(),request.phone());
+    public CustomerEntity createCustomer(CreateCustomerRequest request) {
+        CustomerEntity customer = new CustomerEntity();
+                customer.setFirstName(request.firstName());
+                customer.setLastName(request.lastName());
+                customer.setEmail(request.email());
+                customer.setHashedPassword(request.hashedPassword());
+                customer.setPhoneNumber(request.phone());
         return customerRepository.save(customer);
     }
 }
