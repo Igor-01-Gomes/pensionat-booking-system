@@ -19,7 +19,7 @@ public class CustomerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @NotBlank(message = "Invalid first name")
     @Column(nullable = false, length = 50)
