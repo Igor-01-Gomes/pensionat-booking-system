@@ -1,0 +1,30 @@
+package com.pensionat.customer.controller;
+
+import com.pensionat.customer.model.CreateCustomerRequest;
+import com.pensionat.customer.model.CustomerEntity;
+import com.pensionat.customer.service.CustomerService;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/customers")
+public class CustomerController {
+
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
+    @GetMapping
+    public List<CustomerEntity> getAllCustomers() {
+        return customerService.getAllCustomers();
+    }
+
+    @PostMapping
+    public CustomerEntity createCustomer(@Valid @RequestBody CreateCustomerRequest request) {
+        return customerService.createCustomer(request);
+    }
+}
