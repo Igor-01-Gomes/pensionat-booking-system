@@ -1,4 +1,4 @@
-package com.pensionat.Customer;
+package com.pensionat.customer;
 
 import com.pensionat.customer.model.CreateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
