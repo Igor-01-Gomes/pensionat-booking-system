@@ -6,6 +6,7 @@ import com.pensionat.customer.dto.CreateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
 import com.pensionat.customer.repository.CustomerRepository;
 import com.pensionat.customer.service.CustomerService;
+import com.pensionat.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -92,5 +93,14 @@ class CustomerServiceTest {
 
         customerService.deleteCustomer(customerId);
         verify(customerRepository,times(1)).deleteById(customerId);
+    }
+
+    @Test
+    void givenInvalidId_WhenDeleteCustomer_ThenThrowNotFoundException() {
+        Long customerId = 1L;
+        when(customerRepository.existsById(customerId)).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> customerService.deleteCustomer(customerId));
+        verify (customerRepository, never()).deleteById(any());
     }
 }
