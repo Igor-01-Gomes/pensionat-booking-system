@@ -1,9 +1,8 @@
 package com.pensionat.customer.service;
 
 
-import com.pensionat.booking.model.BookingEntity;
 import com.pensionat.booking.repository.BookingRepository;
-import com.pensionat.customer.model.CreateCustomerRequest;
+import com.pensionat.customer.dto.CreateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
 import com.pensionat.customer.repository.CustomerRepository;
 import org.springframework.stereotype.Service;

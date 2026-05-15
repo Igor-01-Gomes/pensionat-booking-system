@@ -1,6 +1,6 @@
 package com.pensionat.customer.controller;
 
-import com.pensionat.customer.model.CreateCustomerRequest;
+import com.pensionat.customer.dto.CreateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
 import com.pensionat.customer.service.CustomerService;
 import jakarta.validation.Valid;
