@@ -27,4 +27,9 @@ public class CustomerController {
     public CustomerEntity createCustomer(@Valid @RequestBody CreateCustomerRequest request) {
         return customerService.createCustomer(request);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+    }
 }
