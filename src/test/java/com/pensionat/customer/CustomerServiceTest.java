@@ -6,6 +6,7 @@ import com.pensionat.customer.dto.CreateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
 import com.pensionat.customer.repository.CustomerRepository;
 import com.pensionat.customer.service.CustomerService;
+import com.pensionat.exception.BadRequestException;
 import com.pensionat.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -85,6 +86,7 @@ class CustomerServiceTest {
 
         assertThrows(RuntimeException.class, () -> customerService.createCustomer(request));
     }
+
     @Test
     void givenValidId_WhenDeleteCustomer_ThenCustomerIsDeleted() {
         Long customerId = 1L;
@@ -92,7 +94,7 @@ class CustomerServiceTest {
         when(bookingRepository.existsByCustomerIdAndBookingStatus(customerId, BookingStatus.ACTIVE)).thenReturn(false);
 
         customerService.deleteCustomer(customerId);
-        verify(customerRepository,times(1)).deleteById(customerId);
+        verify(customerRepository, times(1)).deleteById(customerId);
     }
 
     @Test
@@ -101,6 +103,16 @@ class CustomerServiceTest {
         when(customerRepository.existsById(customerId)).thenReturn(false);
 
         assertThrows(NotFoundException.class, () -> customerService.deleteCustomer(customerId));
-        verify (customerRepository, never()).deleteById(any());
+        verify(customerRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void givenCustomerWithActiveBooking_WhenDeleteCustomer_ThenThrowBadRequestException() {
+        Long customerId = 1L;
+        when(customerRepository.existsById(customerId)).thenReturn(true);
+        when(bookingRepository.existsByCustomerIdAndBookingStatus(customerId, BookingStatus.ACTIVE)).thenReturn(true);
+
+        assertThrows(BadRequestException.class, () -> customerService.deleteCustomer(customerId));
+        verify(customerRepository, never()).deleteById(customerId);
     }
 }
