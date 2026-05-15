@@ -5,6 +5,7 @@ import com.pensionat.booking.repository.BookingRepository;
 import com.pensionat.customer.dto.CreateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
 import com.pensionat.customer.repository.CustomerRepository;
+import com.pensionat.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,5 +31,11 @@ public class CustomerService {
                 customer.setHashedPassword(request.hashedPassword());
                 customer.setPhoneNumber(request.phone());
         return customerRepository.save(customer);
+    }
+    public void deleteCustomer(Long id) {
+        if (!customerRepository.existsById(id)) {
+            throw new NotFoundException("Customer not found");
+        }
+        customerRepository.deleteById(id);
     }
 }
