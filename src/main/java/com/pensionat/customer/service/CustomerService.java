@@ -4,6 +4,7 @@ package com.pensionat.customer.service;
 import com.pensionat.booking.model.BookingStatus;
 import com.pensionat.booking.repository.BookingRepository;
 import com.pensionat.customer.dto.CreateCustomerRequest;
+import com.pensionat.customer.dto.UpdateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
 import com.pensionat.customer.repository.CustomerRepository;
 import com.pensionat.exception.BadRequestException;
@@ -45,5 +46,16 @@ public class CustomerService {
             throw new BadRequestException("Customer cannot be deleted with an active booking");
         }
         customerRepository.deleteById(id);
+    }
+
+    public CustomerEntity updateCustomer(Long id, UpdateCustomerRequest request) {
+        CustomerEntity customer = customerRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
+        customer.setFirstName(request.firstName());
+        customer.setLastName(request.lastName());
+        customer.setEmail(request.email());
+        customer.setHashedPassword(request.hashedPassword());
+        customer.setPhoneNumber(request.phone());
+        return customerRepository.save(customer);
     }
 }
