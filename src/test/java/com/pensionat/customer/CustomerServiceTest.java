@@ -141,7 +141,7 @@ class CustomerServiceTest {
         existingCustomer.setPhoneNumber("+46707654321");
 
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
-        when(customerRepository.isEmailAvailable(request.email(),customerId)).thenReturn(true);
+        when(customerRepository.existsByEmailAndIdNot(request.email(),customerId)).thenReturn(false);
         when(customerRepository.save(any(CustomerEntity.class))).thenReturn(existingCustomer);
 
         CustomerEntity result = customerService.updateCustomer(customerId, request);
@@ -181,7 +181,7 @@ class CustomerServiceTest {
 
         CustomerEntity existingCustomer = new CustomerEntity();
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
-        when(customerRepository.isEmailAvailable(request.email(),customerId)).thenReturn(false);
+        when(customerRepository.existsByEmailAndIdNot(request.email(),customerId)).thenReturn(true);
 
         assertThrows(BadRequestException.class, () -> customerService.updateCustomer(customerId, request));
         verify(customerRepository, never()).save(any(CustomerEntity.class));
