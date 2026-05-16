@@ -3,6 +3,7 @@ package com.pensionat.customer;
 import com.pensionat.booking.model.BookingStatus;
 import com.pensionat.booking.repository.BookingRepository;
 import com.pensionat.customer.dto.CreateCustomerRequest;
+import com.pensionat.customer.dto.UpdateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
 import com.pensionat.customer.repository.CustomerRepository;
 import com.pensionat.customer.service.CustomerService;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -114,5 +117,73 @@ class CustomerServiceTest {
 
         assertThrows(BadRequestException.class, () -> customerService.deleteCustomer(customerId));
         verify(customerRepository, never()).deleteById(customerId);
+    }
+
+    @Test
+
+    void givenValidRequest_WhenUpdateCustomer_ThenCustomerIsUpdated() {
+        Long customerId = 1L;
+        UpdateCustomerRequest request = new UpdateCustomerRequest(
+                "Daniel",
+                "Lyytikäinen",
+                "UpdatedMail@mail.com",
+                "NewPassword123",
+                "+46701234567"
+
+        );
+
+        CustomerEntity existingCustomer = new CustomerEntity();
+
+        existingCustomer.setFirstName("Igor");
+        existingCustomer.setLastName("Gomes");
+        existingCustomer.setEmail("OldMail@mail.com");
+        existingCustomer.setHashedPassword("OldPassword123");
+        existingCustomer.setPhoneNumber("+46707654321");
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
+        when(customerRepository.isEmailAvailable(request.email(),customerId)).thenReturn(true);
+        when(customerRepository.save(any(CustomerEntity.class))).thenReturn(existingCustomer);
+
+        CustomerEntity result = customerService.updateCustomer(customerId, request);
+
+        assertNotNull(result);
+        assertEquals("Daniel", result.getFirstName());
+        assertEquals("UpdatedMail@mail.com", result.getEmail());
+        verify(customerRepository, times(1)).save(any(CustomerEntity.class));
+    }
+    @Test
+    void givenInvalidRequest_WhenUpdateCustomer_ThenThrowNotFoundException() {
+        Long customerId = 1L;
+        UpdateCustomerRequest request = new UpdateCustomerRequest(
+                "Daniel",
+                "Lyytikäinen",
+                "UpdatedMail@mail.com",
+                "NewPassword123",
+                "+46701234567"
+
+        );
+        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> customerService.updateCustomer(customerId, request));
+        verify(customerRepository, never()).save(any(CustomerEntity.class));
+    }
+
+    @Test
+    void givenEmailAlreadyInUse_WhenUpdateCustomer_ThenThrowBadRequestException() {
+        Long customerId = 1L;
+        UpdateCustomerRequest request = new UpdateCustomerRequest(
+                "Daniel",
+                "Lyytikäinen",
+                "UpdatedMail@mail.com",
+                "NewPassword123",
+                "+46701234567"
+
+        );
+
+        CustomerEntity existingCustomer = new CustomerEntity();
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
+        when(customerRepository.isEmailAvailable(request.email(),customerId)).thenReturn(false);
+
+        assertThrows(BadRequestException.class, () -> customerService.updateCustomer(customerId, request));
+        verify(customerRepository, never()).save(any(CustomerEntity.class));
     }
 }
