@@ -1,6 +1,7 @@
 package com.pensionat.customer.controller;
 
 import com.pensionat.customer.dto.CreateCustomerRequest;
+import com.pensionat.customer.dto.UpdateCustomerRequest;
 import com.pensionat.customer.model.CustomerEntity;
 import com.pensionat.customer.service.CustomerService;
 import jakarta.validation.Valid;
@@ -31,5 +32,13 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public void deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
+    }
+
+    @PutMapping("/{id}")
+    public CustomerEntity updateCustomer(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateCustomerRequest request
+    ) {
+        return customerService.updateCustomer(id, request);
     }
 }

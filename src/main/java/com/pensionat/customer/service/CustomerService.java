@@ -52,7 +52,7 @@ public class CustomerService {
         CustomerEntity customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
 
-        if(!customerRepository.isEmailAvailable(request.email(), id)) {
+        if(customerRepository.existsByEmailAndIdNot(request.email(), id)) {
             throw new BadRequestException("Email is already in use");
         }
         customer.setFirstName(request.firstName());
