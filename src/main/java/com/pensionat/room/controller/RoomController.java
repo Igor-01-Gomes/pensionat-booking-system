@@ -2,12 +2,12 @@ package com.pensionat.room.controller;
 
 import com.pensionat.room.model.RoomEntity;
 import com.pensionat.room.service.RoomService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/rooms")
 public class RoomController {
 
     private final RoomService roomService;
@@ -16,8 +16,13 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @GetMapping("/api/rooms")
+    @GetMapping
     public List<RoomEntity> getAllRooms() {
         return roomService.getAllRooms();
+    }
+
+    @PostMapping
+    public RoomEntity createRoom(@RequestBody RoomEntity room) {
+        return roomService.createRoom(room);
     }
 }

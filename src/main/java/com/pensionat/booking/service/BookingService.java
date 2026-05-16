@@ -42,7 +42,25 @@ public class BookingService {
             throw new BadRequestException("Check-out date must be after check-in date");
         }
 
-        BookingEntity booking = new BookingEntity(customer, room, request.startDate(), request.endDate(), BookingStatus.ACTIVE);
+        boolean roomAlreadyBooked =
+                bookingRepository.existsByRoomIdAndBookingStatusAndStartDateBeforeAndEndDateAfter(
+                        room.getId(),
+                        BookingStatus.ACTIVE,
+                        request.endDate(),
+                        request.startDate()
+                );
+        if (roomAlreadyBooked) {
+            throw new BadRequestException("Room is already booked on selected dates");
+        }
+
+        BookingEntity booking = new BookingEntity(
+                customer,
+                room,
+                request.startDate(),
+                request.endDate(),
+                BookingStatus.ACTIVE
+        );
+
         return  bookingRepository.save(booking);
     }
 

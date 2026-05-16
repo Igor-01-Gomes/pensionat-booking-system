@@ -23,4 +23,8 @@ public class RoomService {
     public Optional<RoomEntity> getRoomById(Long roomId){
         return roomRepository.findById(roomId);
     }
+
+    public RoomEntity createRoom(RoomEntity room) {
+        return roomRepository.save(room);
+    }
 }
