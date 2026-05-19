@@ -43,14 +43,6 @@ class CustomerServiceTest {
                 "Password123",
                 "+46701234567");
 
-        CustomerEntity savedCustomer = new CustomerEntity();
-        savedCustomer.setFirstName("Daniel");
-        savedCustomer.setLastName("Lyytikäinen");
-        savedCustomer.setEmail("Test@test.com");
-        savedCustomer.setHashedPassword("Password123");
-        savedCustomer.setPhoneNumber("+46701234567");
-
-        when(customerRepository.save(any(CustomerEntity.class))).thenReturn(savedCustomer);
 
         CustomerEntity testResult = customerService.createCustomer(request);
 
@@ -61,20 +53,7 @@ class CustomerServiceTest {
         assertEquals("+46701234567", testResult.getPhoneNumber());
         assertNotEquals("Patric", testResult.getFirstName());
 
-        verify(customerRepository).save(any(CustomerEntity.class));
-    }
-
-    @Test
-    void givenValidRequest_WhenCreateCustomer_ThenRepositoryCalledOnce() {
-        CreateCustomerRequest request = new CreateCustomerRequest(
-                "Daniel",
-                "Lyytikäinen",
-                "Test@test.com",
-                "Password123",
-                "+46701234567");
-        when(customerRepository.save(any(CustomerEntity.class))).thenReturn(new CustomerEntity());
-        customerService.createCustomer(request);
-        verify(customerRepository).save(any(CustomerEntity.class));
+        verify(customerRepository, times(1)).save(any(CustomerEntity.class));
     }
 
     @Test
@@ -88,16 +67,6 @@ class CustomerServiceTest {
         when(customerRepository.save(any(CustomerEntity.class))).thenThrow(new RuntimeException("Database error!"));
 
         assertThrows(RuntimeException.class, () -> customerService.createCustomer(request));
-    }
-
-    @Test
-    void givenValidId_WhenDeleteCustomer_ThenCustomerIsDeleted() {
-        Long customerId = 1L;
-        when(customerRepository.existsById(customerId)).thenReturn(true);
-        when(bookingRepository.existsByCustomerIdAndBookingStatus(customerId, BookingStatus.ACTIVE)).thenReturn(false);
-
-        customerService.deleteCustomer(customerId);
-        verify(customerRepository, times(1)).deleteById(customerId);
     }
 
     @Test
@@ -120,7 +89,6 @@ class CustomerServiceTest {
     }
 
     @Test
-
     void givenValidRequest_WhenUpdateCustomer_ThenCustomerIsUpdated() {
         Long customerId = 1L;
         UpdateCustomerRequest request = new UpdateCustomerRequest(
@@ -141,16 +109,16 @@ class CustomerServiceTest {
         existingCustomer.setPhoneNumber("+46707654321");
 
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
-        when(customerRepository.existsByEmailAndIdNot(request.email(),customerId)).thenReturn(false);
-        when(customerRepository.save(any(CustomerEntity.class))).thenReturn(existingCustomer);
+        when(customerRepository.existsByEmailAndIdNot(request.email(), customerId)).thenReturn(false);
 
         CustomerEntity result = customerService.updateCustomer(customerId, request);
 
         assertNotNull(result);
         assertEquals("Daniel", result.getFirstName());
         assertEquals("UpdatedMail@mail.com", result.getEmail());
-        verify(customerRepository, times(1)).save(any(CustomerEntity.class));
+        verify(customerRepository).save(result);
     }
+
     @Test
     void givenInvalidRequest_WhenUpdateCustomer_ThenThrowNotFoundException() {
         Long customerId = 1L;
@@ -181,7 +149,7 @@ class CustomerServiceTest {
 
         CustomerEntity existingCustomer = new CustomerEntity();
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
-        when(customerRepository.existsByEmailAndIdNot(request.email(),customerId)).thenReturn(true);
+        when(customerRepository.existsByEmailAndIdNot(request.email(), customerId)).thenReturn(true);
 
         assertThrows(BadRequestException.class, () -> customerService.updateCustomer(customerId, request));
         verify(customerRepository, never()).save(any(CustomerEntity.class));

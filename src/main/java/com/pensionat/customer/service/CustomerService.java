@@ -35,7 +35,8 @@ public class CustomerService {
         customer.setEmail(request.email());
         customer.setHashedPassword(request.hashedPassword());
         customer.setPhoneNumber(request.phone());
-        return customerRepository.save(customer);
+        customerRepository.save(customer);
+        return customer;
     }
 
     public void deleteCustomer(Long id) {
@@ -60,6 +61,7 @@ public class CustomerService {
         customer.setEmail(request.email());
         customer.setHashedPassword(request.hashedPassword());
         customer.setPhoneNumber(request.phone());
-        return customerRepository.save(customer);
+        customerRepository.save(customer);
+        return customer;
     }
 }
